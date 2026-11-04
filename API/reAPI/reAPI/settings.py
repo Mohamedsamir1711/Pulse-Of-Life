@@ -32,9 +32,9 @@ DEBUG = True
 #     'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 # }
 
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+# DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret-key')
+# SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret-key')
 
 ALLOWED_HOSTS = ['*'] 
 
