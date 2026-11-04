@@ -1,0 +1,150 @@
+{% extends 'style.html' %}
+{% load static %}
+{% block title %}Home{% endblock %}
+
+{% block home %}
+<!-- ===== Hero ===== -->
+<section class="hero">
+  <div class="container">
+    <div class="reveal">
+      <span class="eyebrow eyebrow--dark"><span class="live-dot"></span> Real-time cardiac care</span>
+      <h1>Your heart, <span class="accent">monitored</span> with care every second.</h1>
+      <p class="hero__lead">We are committed to providing the best medical care for you. Every patient is unique and deserves personalized, data-driven heart care from trusted specialists.</p>
+      <div class="hero__actions">
+        <a id="hero-appointment-btn" href="{% url 'appointment' %}" class="btn btn--lg btn--accent"><i class="fa-solid fa-calendar-check"></i> Make an appointment</a>
+        <a id="hero-doctors-btn" href="#doctors" class="btn btn--lg btn--ghost-light">Meet our doctors</a>
+      </div>
+      <div class="hero__stats">
+        <div class="hero__stat"><strong>24/7</strong><span>Live monitoring</span></div>
+        <div class="hero__stat"><strong>6+</strong><span>Expert specialists</span></div>
+        <div class="hero__stat"><strong>AI</strong><span>Powered insights</span></div>
+      </div>
+    </div>
+
+    <div class="hero__media reveal">
+      <img class="hero__image" src="{% static 'image/image11.png' %}" alt="Doctor caring for a patient in a modern clinic" />
+      <div class="float-card float-card--tl">
+        <span class="icon-tile icon-tile--sm"><i class="fa-solid fa-heart-pulse"></i></span>
+        <div><small>Heart rate</small><strong>72 bpm</strong></div>
+      </div>
+      <div class="float-card float-card--br">
+        <span class="live-dot"></span>
+        <div><small>Status</small><strong>All vitals normal</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Services ===== -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow"><i class="fa-solid fa-stethoscope"></i> Our services</span>
+      <h2>Complete heart care in one place</h2>
+      <p>From continuous monitoring to AI-driven recommendations, everything you need to keep your heart healthy.</p>
+    </div>
+
+    <div class="grid grid-3">
+      <article class="feature-card reveal">
+        <span class="icon-tile"><i class="fa-solid fa-heart"></i></span>
+        <h3>Cardiology</h3>
+        <p>Diagnosis and treatment of heart disease by experienced cardiologists.</p>
+      </article>
+      <article class="feature-card reveal">
+        <span class="icon-tile"><i class="fa-solid fa-wave-square"></i></span>
+        <h3>Real-time Heart Rate Monitoring</h3>
+        <p>Continuously track your heart rate in real time and stay informed about your heart health.</p>
+      </article>
+      <article class="feature-card reveal">
+        <span class="icon-tile"><i class="fa-solid fa-bell"></i></span>
+        <h3>Automated Alerts &amp; Notifications</h3>
+        <p>Instant alerts to patients and doctors when heart rate goes outside normal levels, for early detection.</p>
+      </article>
+      <article class="feature-card reveal">
+        <span class="icon-tile"><i class="fa-solid fa-chart-line"></i></span>
+        <h3>Historical Data &amp; Trends</h3>
+        <p>View heart rate history over days, weeks or months to follow long-term heart health.</p>
+      </article>
+      <article class="feature-card reveal">
+        <span class="icon-tile"><i class="fa-solid fa-brain"></i></span>
+        <h3>AI Health Insights</h3>
+        <p>AI analyzes heart rate patterns and gives personalized recommendations to improve heart health.</p>
+      </article>
+      <article class="feature-card reveal">
+        <span class="icon-tile"><i class="fa-solid fa-user-doctor"></i></span>
+        <h3>Doctor Dashboard &amp; Remote Consultation</h3>
+        <p>Doctors monitor multiple patients remotely and run virtual consultations using live and historical data.</p>
+      </article>
+      <article class="feature-card reveal">
+        <span class="icon-tile"><i class="fa-solid fa-truck-medical"></i></span>
+        <h3>Emergency Response</h3>
+        <p>Abnormal patterns automatically notify emergency contacts or healthcare providers for immediate action.</p>
+      </article>
+      <article class="feature-card reveal">
+        <span class="icon-tile"><i class="fa-solid fa-pills"></i></span>
+        <h3>Medication &amp; Lifestyle Reminders</h3>
+        <p>Reminders for medication, exercise and lifestyle changes based on your heart rate trends.</p>
+      </article>
+      <article class="feature-card reveal">
+        <span class="icon-tile"><i class="fa-solid fa-headset"></i></span>
+        <h3>Technical Support</h3>
+        <p>A dedicated team available around the clock to help patients and providers with any technical issue.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== Doctors ===== -->
+<section class="section section--tint" id="doctors">
+  <div class="container">
+    <div class="section-head reveal">
+      <span class="eyebrow"><i class="fa-solid fa-user-doctor"></i> Our doctors</span>
+      <h2>Meet our specialists</h2>
+      <p>Highly qualified physicians dedicated to giving you the most accurate diagnosis and caring treatment.</p>
+    </div>
+
+    <div class="grid grid-3 grid-doctors">
+      <article class="doctor-card reveal">
+        <div class="doctor-card__img"><img src="{% static 'image/image9.png' %}" alt="Dr. John Smith" loading="lazy" /></div>
+        <div class="doctor-card__body"><h3>Dr. John Smith</h3><span class="badge">Cardiologist</span></div>
+      </article>
+      <article class="doctor-card reveal">
+        <div class="doctor-card__img"><img src="{% static 'image/image12.png' %}" alt="Dr. Emily Johnson" loading="lazy" /></div>
+        <div class="doctor-card__body"><h3>Dr. Emily Johnson</h3><span class="badge">Pediatrician</span></div>
+      </article>
+      <article class="doctor-card reveal">
+        <div class="doctor-card__img"><img src="{% static 'image/13.png' %}" alt="Dr. Robert Brown" loading="lazy" /></div>
+        <div class="doctor-card__body"><h3>Dr. Robert Brown</h3><span class="badge">Family Physician</span></div>
+      </article>
+      <article class="doctor-card reveal">
+        <div class="doctor-card__img"><img src="{% static 'image/image14.png' %}" alt="Dr. Sarah Davis" loading="lazy" /></div>
+        <div class="doctor-card__body"><h3>Dr. Sarah Davis</h3><span class="badge">Obstetrician</span></div>
+      </article>
+      <article class="doctor-card reveal">
+        <div class="doctor-card__img"><img src="{% static 'image/image15.png' %}" alt="Dr. Michael Wilson" loading="lazy" /></div>
+        <div class="doctor-card__body"><h3>Dr. Michael Wilson</h3><span class="badge">Surgeon</span></div>
+      </article>
+      <article class="doctor-card reveal">
+        <div class="doctor-card__img"><img src="{% static 'image/image16.png' %}" alt="Dr. Jessica Taylor" loading="lazy" /></div>
+        <div class="doctor-card__body"><h3>Dr. Jessica Taylor</h3><span class="badge">Internist</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="section">
+  <div class="container">
+    <div class="cta reveal">
+      <div>
+        <h2>We are here to help you</h2>
+        <p>We provide comprehensive medical services for patients of all ages. Book a visit today and let our specialists take care of your heart.</p>
+      </div>
+      <div class="cta__actions">
+        <a id="cta-appointment-btn" href="{% url 'appointment' %}" class="btn btn--lg btn--accent"><i class="fa-solid fa-calendar-plus"></i> Book now</a>
+        <a id="cta-doctors-btn" href="{% url 'doctors' %}" class="btn btn--lg btn--ghost-light">View all doctors</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock home %}

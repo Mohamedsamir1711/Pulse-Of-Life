@@ -1,0 +1,152 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Pulse of Life{% endblock %} · Pulse of Life</title>
+  <meta name="description" content="{% block meta_description %}Pulse of Life — real-time heart monitoring, AI-powered cardiac insights and easy appointments with trusted specialists.{% endblock %}" />
+  <meta name="theme-color" content="#03045E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="{% static 'css/theme.css' %}?v=2" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%230077B6'/><path d='M50 78s-26-15-26-34a14 14 0 0 1 26-7 14 14 0 0 1 26 7c0 19-26 34-26 34z' fill='%23CAF0F8'/></svg>" />
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  {% with url_name=request.resolver_match.url_name %}
+  <header class="site-header">
+    <div class="container">
+      <a href="{% url 'home' %}" class="brand" aria-label="Pulse of Life home">
+        <span class="brand__logo"><i class="fa-solid fa-heart-pulse"></i></span>
+        Pulse of Life
+      </a>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="site-nav">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <nav class="nav" id="site-nav" aria-label="Main navigation">
+        <ul class="nav__links">
+          <li><a id="nav-home" class="nav__link {% if url_name == 'home' %}is-active{% endif %}" href="{% url 'home' %}">Home</a></li>
+          <li><a id="nav-doctors" class="nav__link {% if url_name == 'doctors' %}is-active{% endif %}" href="{% url 'doctors' %}">Doctors</a></li>
+          <li><a id="nav-reports" class="nav__link {% if url_name == 'show_reports' %}is-active{% endif %}" href="{% url 'show_reports' %}">Reports</a></li>
+          <li><a id="nav-appointment" class="nav__link {% if url_name == 'appointment' %}is-active{% endif %}" href="{% url 'appointment' %}">Appointments</a></li>
+          <li><a id="nav-profile" class="nav__link {% if url_name == 'profil' %}is-active{% endif %}" href="{% url 'profil' %}">Profile</a></li>
+        </ul>
+        <div class="nav__actions">
+          {% if user.is_authenticated %}
+            <span class="nav__user"><i class="fa-solid fa-circle-user"></i> {{ user.first_name|default:user.username }}</span>
+            <a id="nav-logout" href="{% url 'logout' %}" class="btn btn--sm btn--ghost-light"><i class="fa-solid fa-arrow-right-from-bracket"></i> Log out</a>
+          {% else %}
+            <a id="nav-login" href="{% url 'login' %}" class="btn btn--sm btn--ghost-light">Log in</a>
+            <a id="nav-signup" href="{% url 'signup' %}" class="btn btn--sm btn--accent">Sign up</a>
+          {% endif %}
+        </div>
+      </nav>
+    </div>
+  </header>
+  {% endwith %}
+
+  <main class="main">
+    {% if messages %}
+      <div class="container messages" role="status">
+        {% for message in messages %}
+          <div class="alert alert--{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}">
+            <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation{% elif message.tags == 'success' %}fa-circle-check{% else %}fa-circle-info{% endif %}"></i>
+            <span>{{ message }}</span>
+            <button type="button" class="alert__close" aria-label="Dismiss" onclick="this.parentElement.remove()"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+    {% block home %}{% endblock home %}
+    {% block login %}{% endblock login %}
+    {% block navbar %}{% endblock navbar %}
+    {% block signup %}{% endblock signup %}
+    {% block doctors %}{% endblock doctors %}
+    {% block show_reports %}{% endblock show_reports %}
+    {% block patients %}{% endblock patients %}
+    {% block profile %}{% endblock profile %}
+    {% block appointment %}{% endblock appointment %}
+  </main>
+
+  {% block footer %}
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="{% url 'home' %}" class="brand"><span class="brand__logo"><i class="fa-solid fa-heart-pulse"></i></span> Pulse of Life</a>
+          <p class="mt-2">Smart heart monitoring and AI-assisted cardiac care that keeps patients and doctors connected — anytime, anywhere.</p>
+          <div class="socials">
+            <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+          </div>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul class="footer-links">
+            <li><a href="{% url 'home' %}">Home</a></li>
+            <li><a href="{% url 'doctors' %}">Doctors</a></li>
+            <li><a href="{% url 'show_reports' %}">AI Reports</a></li>
+            <li><a href="{% url 'profil' %}">My Profile</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Patients</h4>
+          <ul class="footer-links">
+            <li><a href="{% url 'appointment' %}">Book appointment</a></li>
+            <li><a href="{% url 'signup' %}">Create account</a></li>
+            <li><a href="{% url 'login' %}">Log in</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul class="footer-links">
+            <li><a href="tel:+201000000000"><i class="fa-solid fa-phone"></i>&nbsp; +20 100 000 0000</a></li>
+            <li><a href="mailto:care@pulseoflife.com"><i class="fa-solid fa-envelope"></i>&nbsp; care@pulseoflife.com</a></li>
+            <li><span><i class="fa-solid fa-clock"></i>&nbsp; 24/7 emergency support</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>&copy; {% now "Y" %} Pulse of Life. All rights reserved.</span>
+        <span>Made with <i class="fa-solid fa-heart" style="color: var(--cyan);"></i> for better hearts</span>
+      </div>
+    </div>
+  </footer>
+  {% endblock footer %}
+
+  <script>
+    (function () {
+      var toggle = document.getElementById('nav-toggle');
+      var nav = document.getElementById('site-nav');
+      if (toggle && nav) {
+        toggle.addEventListener('click', function () {
+          var open = nav.classList.toggle('is-open');
+          toggle.setAttribute('aria-expanded', open);
+          toggle.innerHTML = open ? '<i class="fa-solid fa-xmark"></i>' : '<i class="fa-solid fa-bars"></i>';
+        });
+      }
+      var items = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('is-visible'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.12 });
+        items.forEach(function (el) { io.observe(el); });
+      } else {
+        items.forEach(function (el) { el.classList.add('is-visible'); });
+      }
+    })();
+  </script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

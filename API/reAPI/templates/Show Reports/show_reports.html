@@ -1,0 +1,250 @@
+{% extends 'style.html' %}
+{% block title %}AI Heart Report{% endblock %}
+
+{% block show_reports %}
+<section class="page-hero">
+  <div class="container">
+    <div class="row row--between">
+      <div>
+        <nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right" style="font-size:.65rem"></i><span>Reports</span></nav>
+        <h1>AI heart report &amp; database records</h1>
+        <p>Check patient clinical measurements against the MySQL heart dataset or click any record below to auto-fill and inspect results.</p>
+      </div>
+      <button type="button" id="export-btn" class="btn btn--ghost-light" onclick="window.print()"><i class="fa-solid fa-file-export"></i> Export</button>
+    </div>
+  </div>
+</section>
+
+<section class="page-body">
+  <div class="container stack" style="gap: 24px">
+
+    <!-- ===== Live MySQL Summary Stats ===== -->
+    <div class="grid grid-4">
+      <div class="stat-card"><span class="icon-tile"><i class="fa-solid fa-database"></i></span><div><strong>{{ total_rows|default:"0" }}</strong><span>SQL Records (stable)</span></div></div>
+      <div class="stat-card"><span class="icon-tile"><i class="fa-solid fa-users"></i></span><div><strong>{{ total_patients|default:"0" }}</strong><span>Unique Patients</span></div></div>
+      <div class="stat-card"><span class="icon-tile"><i class="fa-solid fa-heart-pulse"></i></span><div><strong>{{ avg_hr|default:"—" }} bpm</strong><span>Avg Heart Rate</span></div></div>
+      <div class="stat-card"><span class="icon-tile"><i class="fa-solid fa-lungs"></i></span><div><strong>{{ avg_spo2|default:"—" }}%</strong><span>Avg SpO₂</span></div></div>
+    </div>
+
+    <!-- ===== Checker form ===== -->
+    <form method="post" class="card" id="heart-check-form">
+      {% csrf_token %}
+      <div class="card__title">
+        <span class="icon-tile"><i class="fa-solid fa-stethoscope"></i></span>
+        <div>
+          <h2 style="font-size:1.4rem">Heart disease checker</h2>
+          <p class="muted mb-0" style="font-size:.92rem">Enter a Patient ID (0–917) &amp; TimeStep (0–9) to look up the SQL diagnosis, or click "Use in checker" on any row in the database table below.</p>
+        </div>
+      </div>
+
+      {% if checks %}
+        <div class="result-banner" style="{% if check_danger %}border-color: var(--danger); background: linear-gradient(135deg, #fde8ea, var(--white));{% else %}border-color: var(--success); background: linear-gradient(135deg, #e2f7f1, var(--white));{% endif %}">
+          <span class="icon-tile" style="{% if check_danger %}background: var(--danger); color: var(--white);{% else %}background: var(--success); color: var(--white);{% endif %}">
+            <i class="fa-solid {% if check_danger %}fa-triangle-exclamation{% else %}fa-shield-heart{% endif %}"></i>
+          </span>
+          <div>
+            <span class="muted" style="font-size:.85rem">Diagnosis Result</span><br />
+            <strong style="{% if check_danger %}color: var(--danger);{% else %}color: var(--success);{% endif %}">{{ checks }}</strong>
+          </div>
+        </div>
+      {% endif %}
+      {% if error %}
+        <div class="alert alert--error"><i class="fa-solid fa-circle-exclamation"></i><span>{{ error }}</span></div>
+      {% endif %}
+
+      <div class="form-section-title"><i class="fa-solid fa-user"></i> Patient</div>
+      <div class="form-grid form-grid--4">
+        <div class="field"><label for="Patientid">Patient ID</label><input type="number" id="Patientid" name="Patientid" placeholder="e.g. 0" required /></div>
+        <div class="field"><label for="Age">Age</label><input type="number" id="Age" name="Age" min="1" max="120" placeholder="Years" required /></div>
+        <div class="field"><label for="Sex">Sex</label>
+          <select id="Sex" name="Sex" required><option value="" selected disabled>Select</option><option value="M">Male (M)</option><option value="F">Female (F)</option></select></div>
+        <div class="field"><label for="Timestep">Time step</label>
+          <select id="Timestep" name="Timestep" required><option value="" selected disabled>Select</option>{% for i in "0123456789" %}<option value="{{ i }}">{{ i }}</option>{% endfor %}</select></div>
+      </div>
+
+      <div class="form-section-title mt-4"><i class="fa-solid fa-notes-medical"></i> Clinical tests</div>
+      <div class="form-grid form-grid--3">
+        <div class="field"><label for="ChestPainType">Chest pain type</label>
+          <select id="ChestPainType" name="ChestPainType" required><option value="" selected disabled>Select</option><option value="ATA">ATA — Atypical angina</option><option value="NAP">NAP — Non-anginal pain</option><option value="ASY">ASY — Asymptomatic</option><option value="TA">TA — Typical angina</option></select></div>
+        <div class="field"><label for="RestingBP">Resting BP <span class="muted" style="font-weight:400">(mm Hg)</span></label><input type="number" id="RestingBP" name="RestingBP" placeholder="e.g. 140" required /></div>
+        <div class="field"><label for="Cholesterol">Cholesterol <span class="muted" style="font-weight:400">(mg/dl)</span></label><input type="number" id="Cholesterol" name="Cholesterol" placeholder="e.g. 289" required /></div>
+        <div class="field"><label for="FastingBS">Fasting blood sugar</label>
+          <select id="FastingBS" name="FastingBS" required><option value="" selected disabled>Select</option><option value="1">1 (&gt; 120 mg/dl)</option><option value="0">0 (≤ 120 mg/dl)</option></select></div>
+        <div class="field"><label for="RestingECG">Resting ECG</label>
+          <select id="RestingECG" name="RestingECG" required><option value="" selected disabled>Select</option><option value="Normal">Normal</option><option value="ST">ST</option><option value="LVH">LVH</option></select></div>
+        <div class="field"><label for="MaxHR">Max heart rate</label><input type="number" id="MaxHR" name="MaxHR" placeholder="e.g. 172" required /></div>
+        <div class="field"><label for="ExerciseAngina">Exercise angina</label>
+          <select id="ExerciseAngina" name="ExerciseAngina" required><option value="" selected disabled>Select</option><option value="Y">Yes (Y)</option><option value="N">No (N)</option></select></div>
+        <div class="field"><label for="Oldpeak">Oldpeak</label><input type="number" step="0.1" id="Oldpeak" name="Oldpeak" placeholder="e.g. 0.0" required /></div>
+        <div class="field"><label for="ST_Slope">ST slope</label>
+          <select id="ST_Slope" name="ST_Slope" required><option value="" selected disabled>Select</option><option value="Up">Up</option><option value="Flat">Flat</option><option value="Down">Down</option></select></div>
+        <div class="field"><label for="Heartdisease">Heart disease (known)</label>
+          <select id="Heartdisease" name="Heartdisease" required><option value="" selected disabled>Select</option><option value="0">0 — Normal</option><option value="1">1 — Heart Disease</option></select></div>
+      </div>
+
+      <div class="form-section-title mt-4"><i class="fa-solid fa-wave-square"></i> Live vitals</div>
+      <div class="form-grid form-grid--3">
+        <div class="field"><label for="Heartrate">Heart rate <span class="muted" style="font-weight:400">(bpm)</span></label><input type="number" step="any" id="Heartrate" name="Heartrate" placeholder="e.g. 65.0" required /></div>
+        <div class="field"><label for="Bloodpressure">Blood pressure <span class="muted" style="font-weight:400">(mm Hg)</span></label><input type="number" step="any" id="Bloodpressure" name="Bloodpressure" placeholder="e.g. 138.3" required /></div>
+        <div class="field"><label for="Oxygensaturation">Oxygen saturation <span class="muted" style="font-weight:400">(%)</span></label><input type="number" step="any" id="Oxygensaturation" name="Oxygensaturation" placeholder="e.g. 98.1" required /></div>
+      </div>
+
+      <div class="row mt-4" style="justify-content:flex-end">
+        <button type="reset" class="btn btn--soft">Clear</button>
+        <button type="submit" id="check-btn" class="btn btn--lg btn--primary"><i class="fa-solid fa-magnifying-glass-chart"></i> Run check</button>
+      </div>
+    </form>
+
+    <!-- ===== MySQL Patient Results Table ===== -->
+    <div class="card">
+      <div class="row row--between" style="margin-bottom: 18px;">
+        <div class="card__title" style="margin:0">
+          <span class="icon-tile icon-tile--sm"><i class="fa-solid fa-table-list"></i></span>
+          <div>
+            <h3 style="margin:0">MySQL Database Results (<code>stable</code>)</h3>
+            <span class="muted" style="font-size:.85rem">Showing 25 records{% if search_pid %} for Patient #{{ search_pid }}{% endif %} · Click any row to load into the checker</span>
+          </div>
+        </div>
+        <form method="get" class="row" style="gap: 8px;">
+          <input type="number" name="patient_id" value="{{ search_pid }}" placeholder="Filter by Patient ID (0–917)" class="input" style="width: 220px; height: 40px;" />
+          <button type="submit" class="btn btn--sm btn--primary"><i class="fa-solid fa-filter"></i> Filter</button>
+          {% if search_pid %}<a href="{% url 'show_reports' %}" class="btn btn--sm btn--soft">Reset</a>{% endif %}
+        </form>
+      </div>
+
+      <div style="overflow-x: auto; border: 1px solid var(--sky); border-radius: var(--radius);">
+        <table style="width: 100%; border-collapse: collapse; font-size: .88rem; text-align: left; white-space: nowrap;">
+          <thead>
+            <tr style="background: var(--navy); color: var(--white);">
+              <th style="padding: 12px 14px;">Patient</th>
+              <th style="padding: 12px 14px;">Step</th>
+              <th style="padding: 12px 14px;">Age / Sex</th>
+              <th style="padding: 12px 14px;">Chest Pain</th>
+              <th style="padding: 12px 14px;">Rest BP</th>
+              <th style="padding: 12px 14px;">Chol</th>
+              <th style="padding: 12px 14px;">ECG</th>
+              <th style="padding: 12px 14px;">Max HR</th>
+              <th style="padding: 12px 14px;">Angina</th>
+              <th style="padding: 12px 14px;">Oldpeak / Slope</th>
+              <th style="padding: 12px 14px;">HR / BP / SpO₂</th>
+              <th style="padding: 12px 14px;">Result</th>
+              <th style="padding: 12px 14px;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in records %}
+            <tr style="border-bottom: 1px solid rgba(144, 224, 239, 0.45); background: {% cycle 'var(--white)' 'var(--mist-soft)' %};">
+              <td style="padding: 10px 14px; font-weight: 700; color: var(--navy);">#{{ r.patientid }}</td>
+              <td style="padding: 10px 14px;">{{ r.timestep }}</td>
+              <td style="padding: 10px 14px;">{{ r.age }} · {{ r.sex }}</td>
+              <td style="padding: 10px 14px;"><span class="badge">{{ r.chestpaintype }}</span></td>
+              <td style="padding: 10px 14px;">{{ r.restingbp }}</td>
+              <td style="padding: 10px 14px;">{{ r.cholestrol }}</td>
+              <td style="padding: 10px 14px;">{{ r.restingecg }}</td>
+              <td style="padding: 10px 14px;">{{ r.maxhr }}</td>
+              <td style="padding: 10px 14px;">{{ r.exerciseangina }}</td>
+              <td style="padding: 10px 14px;">{{ r.oldpeak }} / {{ r.st_slope }}</td>
+              <td style="padding: 10px 14px;">{{ r.heartrate }} bpm · {{ r.bloodpressure }} · {{ r.oxygensaturation }}%</td>
+              <td style="padding: 10px 14px;">
+                {% if r.heartdisease == 1 %}
+                  <span class="badge badge--danger"><i class="fa-solid fa-heart-crack"></i> Heart Disease</span>
+                {% else %}
+                  <span class="badge badge--success"><i class="fa-solid fa-heart-circle-check"></i> Normal</span>
+                {% endif %}
+              </td>
+              <td style="padding: 10px 14px;">
+                <button type="button" class="btn btn--sm btn--soft"
+                  onclick="fillChecker('{{ r.patientid }}','{{ r.age }}','{{ r.sex }}','{{ r.timestep }}','{{ r.chestpaintype }}','{{ r.restingbp }}','{{ r.cholestrol }}','{{ r.fastingbs }}','{{ r.restingecg }}','{{ r.maxhr }}','{{ r.exerciseangina }}','{{ r.oldpeak }}','{{ r.st_slope }}','{{ r.heartdisease }}','{{ r.heartrate }}','{{ r.bloodpressure }}','{{ r.oxygensaturation }}')">
+                  <i class="fa-solid fa-arrow-up-from-bracket"></i> Use in checker
+                </button>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="13" style="padding: 24px; text-align: center;" class="muted">No records found for this filter.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== Analysis ===== -->
+    <div class="grid layout-split" style="grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items:start">
+      <div class="card">
+        <div class="card__title"><span class="icon-tile icon-tile--sm"><i class="fa-solid fa-chart-column"></i></span><h3>Detailed analysis</h3></div>
+        <div class="stack">
+          <div class="metric">
+            <div class="metric__head"><span class="icon-tile icon-tile--sm"><i class="fa-solid fa-bed"></i></span><div><strong>Resting heart rate</strong><div class="metric__range">Normal: 60–100 bpm</div></div></div>
+            <p>Dataset average heart rate is {{ avg_hr|default:"68" }} bpm. Consistently elevated resting heart rate can indicate cardiovascular strain or stress.</p>
+          </div>
+          <div class="metric">
+            <div class="metric__head"><span class="icon-tile icon-tile--sm"><i class="fa-solid fa-heart-circle-bolt"></i></span><div><strong>Blood pressure</strong><div class="metric__range">Normal: 90–120 mm Hg</div></div></div>
+            <p>Dataset average blood pressure is {{ avg_bp|default:"120" }} mm Hg. Monitoring resting BP alongside cholesterol helps detect early hypertension.</p>
+          </div>
+          <div class="metric">
+            <div class="metric__head"><span class="icon-tile icon-tile--sm"><i class="fa-solid fa-person-running"></i></span><div><strong>Oxygen saturation (SpO₂)</strong><div class="metric__range">Normal: 95–100%</div></div></div>
+            <p>Dataset average oxygen saturation is {{ avg_spo2|default:"98" }}%. Values within 95–100% reflect healthy blood oxygenation across time steps.</p>
+          </div>
+        </div>
+
+        <div class="chart-box mt-3">
+          <div class="row row--between" style="margin-bottom:8px"><span class="label">Heart rate trend</span><span class="badge">10 time steps</span></div>
+          <svg width="100%" height="148" viewBox="-3 0 478 150" fill="none" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25V149H0V109Z" fill="url(#trendFill)"></path>
+            <path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25" stroke="#0077B6" stroke-width="3" stroke-linecap="round"></path>
+            <defs><linearGradient id="trendFill" x1="236" y1="1" x2="236" y2="149" gradientUnits="userSpaceOnUse"><stop stop-color="#00B4D8" stop-opacity=".35"></stop><stop offset="1" stop-color="#CAF0F8" stop-opacity="0"></stop></linearGradient></defs>
+          </svg>
+        </div>
+      </div>
+
+      <div class="stack" style="gap:24px">
+        <div class="card">
+          <div class="card__title"><span class="icon-tile icon-tile--sm"><i class="fa-solid fa-lightbulb"></i></span><h3>Recommendations</h3></div>
+          <div class="list-item" style="padding-left:0;padding-right:0;align-items:flex-start">
+            <span class="icon-tile icon-tile--sm"><i class="fa-solid fa-gauge-simple"></i></span>
+            <div class="list-item__body"><strong>Reduce training intensity</strong><span>Resting heart rate is 10% higher than normal. Consider taking a few days off to recover.</span></div>
+          </div>
+          <div class="list-item" style="padding-left:0;padding-right:0;align-items:flex-start">
+            <span class="icon-tile icon-tile--sm"><i class="fa-solid fa-mug-hot"></i></span>
+            <div class="list-item__body"><strong>Take a few days off</strong><span>Your HRV is 20% lower than normal, which can indicate stress or overtraining.</span></div>
+          </div>
+          <div class="list-item" style="padding-left:0;padding-right:0;align-items:flex-start">
+            <span class="icon-tile icon-tile--sm"><i class="fa-solid fa-heart-pulse"></i></span>
+            <div class="list-item__body"><strong>Monitor heart rate during exercise</strong><span>Your average exercise heart rate is 5% higher than normal.</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="row row--between"><span class="label">Database coverage</span><strong style="color:var(--navy)">100%</strong></div>
+          <div class="progress mt-2"><span style="width: 100%"></span></div>
+          <p class="muted mt-2 mb-0" style="font-size:.88rem">Connected to <code>patientinfo.stable</code> ({{ total_rows }} rows imported).</p>
+        </div>
+
+        <a href="{% url 'appointment' %}" class="btn btn--primary btn--block"><i class="fa-solid fa-calendar-plus"></i> Discuss with a doctor</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function fillChecker(pid, age, sex, step, cp, rbp, chol, fbs, ecg, maxhr, ang, oldpeak, slope, hd, hr, bp, spo2) {
+  document.getElementById('Patientid').value = pid;
+  document.getElementById('Age').value = age;
+  document.getElementById('Sex').value = sex;
+  document.getElementById('Timestep').value = step;
+  document.getElementById('ChestPainType').value = cp;
+  document.getElementById('RestingBP').value = rbp;
+  document.getElementById('Cholesterol').value = chol;
+  document.getElementById('FastingBS').value = fbs;
+  document.getElementById('RestingECG').value = ecg;
+  document.getElementById('MaxHR').value = maxhr;
+  document.getElementById('ExerciseAngina').value = ang;
+  document.getElementById('Oldpeak').value = oldpeak;
+  document.getElementById('ST_Slope').value = slope;
+  document.getElementById('Heartdisease').value = hd;
+  document.getElementById('Heartrate').value = hr;
+  document.getElementById('Bloodpressure').value = bp;
+  document.getElementById('Oxygensaturation').value = spo2;
+  document.getElementById('heart-check-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+</script>
+{% endblock show_reports %}

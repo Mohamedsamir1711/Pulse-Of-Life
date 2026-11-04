@@ -1,0 +1,72 @@
+{% extends 'style.html' %}
+{% load static %}
+{% block title %}Create account{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block signup %}
+<section class="auth">
+  <div class="auth__aside" style="--auth-img: url('{% static 'image/image12.png' %}')">
+    <span class="eyebrow eyebrow--dark"><i class="fa-solid fa-heart-pulse"></i> Join Pulse of Life</span>
+    <h2>Smarter heart care starts here.</h2>
+    <p>Create your free account to connect your device, receive instant alerts and book visits with our specialists.</p>
+    <ul class="auth__list">
+      <li><i class="fa-solid fa-circle-check"></i> Free to get started</li>
+      <li><i class="fa-solid fa-circle-check"></i> Secure, private health data</li>
+      <li><i class="fa-solid fa-circle-check"></i> 24/7 support team</li>
+    </ul>
+  </div>
+
+  <div class="auth__main">
+    <div class="auth__card" style="max-width: 520px">
+      <h1>Create account</h1>
+      <p>It only takes a minute to get started.</p>
+
+      <form id="signup-form" method="POST" action="{% url 'signup' %}" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="alert alert--error"><i class="fa-solid fa-circle-exclamation"></i><span>{{ form.non_field_errors|join:" " }}</span></div>
+        {% endif %}
+
+        <div class="form-grid">
+          <div class="field {% if form.first_name.errors %}has-error{% endif %}">
+            <label for="{{ form.first_name.id_for_label }}">First name</label>
+            {{ form.first_name }}
+            {{ form.first_name.errors }}
+          </div>
+          <div class="field {% if form.last_name.errors %}has-error{% endif %}">
+            <label for="{{ form.last_name.id_for_label }}">Last name</label>
+            {{ form.last_name }}
+            {{ form.last_name.errors }}
+          </div>
+          <div class="field span-full {% if form.username.errors %}has-error{% endif %}">
+            <label for="{{ form.username.id_for_label }}">Username</label>
+            <div class="input-wrap"><i class="fa-regular fa-user"></i>{{ form.username }}</div>
+            {{ form.username.errors }}
+            <span class="hint">150 characters or fewer. Letters, digits and @/./+/-/_ only.</span>
+          </div>
+          <div class="field span-full {% if form.email.errors %}has-error{% endif %}">
+            <label for="{{ form.email.id_for_label }}">Email address</label>
+            <div class="input-wrap"><i class="fa-regular fa-envelope"></i>{{ form.email }}</div>
+            {{ form.email.errors }}
+          </div>
+          <div class="field {% if form.password1.errors %}has-error{% endif %}">
+            <label for="{{ form.password1.id_for_label }}">Password</label>
+            <div class="input-wrap"><i class="fa-solid fa-lock"></i>{{ form.password1 }}</div>
+            {{ form.password1.errors }}
+          </div>
+          <div class="field {% if form.password2.errors %}has-error{% endif %}">
+            <label for="{{ form.password2.id_for_label }}">Confirm password</label>
+            <div class="input-wrap"><i class="fa-solid fa-lock"></i>{{ form.password2 }}</div>
+            {{ form.password2.errors }}
+          </div>
+          <p class="hint span-full mb-0">Use at least 8 characters, not entirely numeric, and not similar to your personal information.</p>
+        </div>
+
+        <button type="submit" id="signup-submit" class="btn btn--lg btn--primary btn--block mt-3">Create account <i class="fa-solid fa-arrow-right"></i></button>
+      </form>
+
+      <p class="auth__foot">Already have an account? <a id="login-link" href="{% url 'login' %}">Log in</a></p>
+    </div>
+  </div>
+</section>
+{% endblock signup %}

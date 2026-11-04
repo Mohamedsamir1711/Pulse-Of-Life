@@ -1,0 +1,45 @@
+{% extends 'style.html' %}
+{% load static %}
+{% block title %}Appointment Confirmed{% endblock %}
+
+{% block appointment %}
+<section class="page-hero">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right" style="font-size:.65rem"></i><a href="{% url 'appointment' %}">Appointment</a><i class="fa-solid fa-chevron-right" style="font-size:.65rem"></i><span>Confirmed</span></nav>
+    <h1>Request received</h1>
+    <p>Thank you, {{ appt.full_name }}. We'll contact you shortly to confirm your visit.</p>
+  </div>
+</section>
+
+<section class="page-body">
+  <div class="container">
+    <div class="card success-card">
+      <span class="icon-tile"><i class="fa-solid fa-check"></i></span>
+      <h2>Your appointment is booked</h2>
+      <p class="muted">Booking reference <span class="badge badge--navy">#PL-{{ appt.pk|stringformat:"05d" }}</span></p>
+
+      <div class="list-item mt-3" style="background: var(--mist-soft); border-color: var(--sky); text-align:left">
+        {% if doctor_image %}<img src="{% static doctor_image %}" alt="" class="avatar" style="width:64px;height:64px;box-shadow:0 0 0 2px var(--cyan)" />{% endif %}
+        <div class="list-item__body">
+          <strong>{{ appt.get_doctor_display }}</strong>
+          <span>{{ appt.get_visit_type_display }}</span>
+        </div>
+        <span class="badge">{{ appt.get_status_display }}</span>
+      </div>
+
+      <dl class="info-list mt-3" style="text-align:left">
+        <div class="info-list__row"><dt><i class="fa-regular fa-calendar"></i> Date</dt><dd>{{ appt.date|date:"l, F j, Y" }}</dd></div>
+        <div class="info-list__row"><dt><i class="fa-regular fa-clock"></i> Time</dt><dd>{{ appt.get_time_display }}</dd></div>
+        <div class="info-list__row"><dt><i class="fa-regular fa-envelope"></i> Email</dt><dd>{{ appt.email }}</dd></div>
+        <div class="info-list__row"><dt><i class="fa-solid fa-phone"></i> Phone</dt><dd>{{ appt.phone }}</dd></div>
+        {% if appt.reason %}<div class="info-list__row"><dt><i class="fa-regular fa-note-sticky"></i> Reason</dt><dd>{{ appt.reason }}</dd></div>{% endif %}
+      </dl>
+
+      <div class="row mt-4" style="justify-content:center">
+        <a id="success-home-btn" href="{% url 'home' %}" class="btn btn--soft">Back to home</a>
+        <a id="success-new-btn" href="{% url 'appointment' %}" class="btn btn--primary"><i class="fa-solid fa-plus"></i> Book another</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock appointment %}

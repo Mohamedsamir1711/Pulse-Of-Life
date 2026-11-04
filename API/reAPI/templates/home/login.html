@@ -1,0 +1,46 @@
+{% extends "style.html" %}
+{% load static %}
+{% block title %}Log in{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block login %}
+<section class="auth">
+  <div class="auth__aside" style="--auth-img: url('{% static 'image/image11.png' %}')">
+    <span class="eyebrow eyebrow--dark"><span class="live-dot"></span> Welcome back</span>
+    <h2>Keep every heartbeat in check.</h2>
+    <p>Log in to follow your live vitals, review AI reports and manage your appointments.</p>
+    <ul class="auth__list">
+      <li><i class="fa-solid fa-circle-check"></i> Real-time heart rate monitoring</li>
+      <li><i class="fa-solid fa-circle-check"></i> AI-powered health reports</li>
+      <li><i class="fa-solid fa-circle-check"></i> Direct access to your doctors</li>
+    </ul>
+  </div>
+
+  <div class="auth__main">
+    <div class="auth__card">
+      <h1>Log in</h1>
+      <p>Enter your credentials to access your account.</p>
+
+      <form id="login-form" class="stack" action="{% url 'login' %}" method="POST" style="gap:18px">
+        {% csrf_token %}
+        <div class="field">
+          <label for="username">Username</label>
+          <div class="input-wrap"><i class="fa-regular fa-user"></i>
+            <input type="text" name="username" id="username" placeholder="Your username" autocomplete="username" required />
+          </div>
+        </div>
+        <div class="field">
+          <div class="row row--between"><label for="password">Password</label></div>
+          <div class="input-wrap"><i class="fa-solid fa-lock"></i>
+            <input type="password" name="password" id="password" placeholder="••••••••" autocomplete="current-password" required />
+          </div>
+        </div>
+        <label class="check" for="remember-me"><input id="remember-me" name="remember-me" type="checkbox" /> Remember me</label>
+        <button type="submit" id="login-submit" class="btn btn--lg btn--primary btn--block">Log in <i class="fa-solid fa-arrow-right"></i></button>
+      </form>
+
+      <p class="auth__foot">Don't have an account? <a id="register-link" href="{% url 'signup' %}">Create one</a></p>
+    </div>
+  </div>
+</section>
+{% endblock login %}

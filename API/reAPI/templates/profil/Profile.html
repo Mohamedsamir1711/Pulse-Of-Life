@@ -1,0 +1,82 @@
+{% extends 'style.html' %}
+{% load static %}
+{% block title %}My Profile{% endblock %}
+
+{% block profile %}
+<section class="page-hero">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right" style="font-size:.65rem"></i><span>Profile</span></nav>
+    <h1>My profile</h1>
+    <p>Your personal information and account details.</p>
+  </div>
+</section>
+
+<section class="page-body">
+  <div class="container stack" style="gap: 24px">
+    <div class="card">
+      <div class="profile-head">
+        {% if user.is_authenticated %}
+          <div class="avatar avatar--initials">{{ user.first_name|default:user.username|first|upper }}</div>
+          <div style="flex:1">
+            <h2 class="mb-0">{{ user.get_full_name|default:user.username }}</h2>
+            <p class="muted mb-0">@{{ user.username }} · Member since {{ user.date_joined|date:"F Y" }}</p>
+            <div class="row mt-2">
+              <span class="badge"><i class="fa-solid fa-user"></i> {% if user.is_staff %}Staff{% else %}Patient{% endif %}</span>
+              <span class="badge badge--success"><i class="fa-solid fa-circle-check"></i> Active</span>
+            </div>
+          </div>
+          <a id="profile-book-btn" href="{% url 'appointment' %}" class="btn btn--primary"><i class="fa-solid fa-calendar-plus"></i> Book appointment</a>
+        {% else %}
+          <img class="avatar" src="{% static 'image/image1.png' %}" alt="Isabella Rodriguez" />
+          <div style="flex:1">
+            <h2 class="mb-0">Isabella Rodriguez</h2>
+            <p class="muted mb-0">Product Designer in Brighton, UK · She/Her</p>
+            <div class="row mt-2"><span class="badge">Sample profile</span></div>
+          </div>
+          <a id="profile-login-btn" href="{% url 'login' %}" class="btn btn--primary">Log in to see yours</a>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="grid layout-split" style="grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); align-items:start">
+      <div class="card">
+        <div class="card__title"><span class="icon-tile icon-tile--sm"><i class="fa-solid fa-id-card"></i></span><h3>User information</h3></div>
+        <dl class="info-list">
+          {% if user.is_authenticated %}
+            <div class="info-list__row"><dt><i class="fa-regular fa-user"></i> Full name</dt><dd>{{ user.get_full_name|default:"—" }}</dd></div>
+            <div class="info-list__row"><dt><i class="fa-solid fa-at"></i> Username</dt><dd>{{ user.username }}</dd></div>
+            <div class="info-list__row"><dt><i class="fa-regular fa-envelope"></i> Email</dt><dd>{{ user.email|default:"—" }}</dd></div>
+            <div class="info-list__row"><dt><i class="fa-solid fa-user-tag"></i> Role</dt><dd>{% if user.is_staff %}Staff{% else %}Patient{% endif %}</dd></div>
+            <div class="info-list__row"><dt><i class="fa-regular fa-clock"></i> Last login</dt><dd>{{ user.last_login|date:"M j, Y · H:i"|default:"—" }}</dd></div>
+          {% else %}
+            <div class="info-list__row"><dt><i class="fa-regular fa-user"></i> Full name</dt><dd>Isabella Rodriguez</dd></div>
+            <div class="info-list__row"><dt><i class="fa-regular fa-image"></i> Profile picture</dt><dd>Female, age 30, profile photo</dd></div>
+            <div class="info-list__row"><dt><i class="fa-solid fa-cake-candles"></i> Age</dt><dd>30</dd></div>
+            <div class="info-list__row"><dt><i class="fa-regular fa-envelope"></i> Contact</dt><dd>isabella.rodriguez@gmail.com</dd></div>
+            <div class="info-list__row"><dt><i class="fa-solid fa-user-tag"></i> Role</dt><dd>Product Designer</dd></div>
+            <div class="info-list__row"><dt><i class="fa-solid fa-hospital"></i> Hospital / Institution</dt><dd>Brighton, UK</dd></div>
+          {% endif %}
+        </dl>
+      </div>
+
+      <div class="card">
+        <div class="card__title"><span class="icon-tile icon-tile--sm"><i class="fa-regular fa-calendar-check"></i></span><h3>My appointments</h3></div>
+        {% if user.is_authenticated %}
+          {% for a in user.appointments.all|slice:":5" %}
+            <div class="list-item" style="padding-left:0;padding-right:0">
+              <div class="list-item__body"><strong>{{ a.get_doctor_display }}</strong><span>{{ a.date|date:"M j, Y" }} · {{ a.get_time_display }}</span></div>
+              <span class="badge {% if a.status == 'confirmed' %}badge--success{% elif a.status == 'cancelled' %}badge--danger{% endif %}">{{ a.get_status_display }}</span>
+            </div>
+          {% empty %}
+            <p class="muted">You have no appointments yet.</p>
+            <a href="{% url 'appointment' %}" class="btn btn--soft btn--block">Book your first visit</a>
+          {% endfor %}
+        {% else %}
+          <p class="muted">Log in to see and manage your appointments.</p>
+          <a href="{% url 'login' %}" class="btn btn--soft btn--block">Log in</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock profile %}

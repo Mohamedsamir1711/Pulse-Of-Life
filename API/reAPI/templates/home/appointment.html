@@ -1,0 +1,128 @@
+{% extends 'style.html' %}
+{% load static %}
+{% block title %}Book an Appointment{% endblock %}
+{% block meta_description %}Book an in-person visit or video consultation with a Pulse of Life heart specialist in under a minute.{% endblock %}
+
+{% block appointment %}
+<section class="page-hero">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Breadcrumb"><a href="{% url 'home' %}">Home</a><i class="fa-solid fa-chevron-right" style="font-size:.65rem"></i><span>Appointment</span></nav>
+    <h1>Book an appointment</h1>
+    <p>Choose your specialist, pick a time that suits you and we'll take care of the rest. It only takes a minute.</p>
+  </div>
+</section>
+
+<section class="page-body">
+  <div class="container">
+    <div class="grid layout-split" style="grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr); align-items: start;">
+
+      <!-- Form -->
+      <form method="post" class="card" id="appointment-form" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="alert alert--error"><i class="fa-solid fa-circle-exclamation"></i><span>{{ form.non_field_errors|join:" " }}</span></div>
+        {% endif %}
+
+        <!-- 1. Doctor -->
+        <div class="form-section-title"><i class="fa-solid fa-user-doctor"></i> 1 · Choose a doctor</div>
+        <div class="doctor-pick" role="radiogroup" aria-label="Doctor">
+          {% for d in doctors %}
+          <label for="doctor-{{ d.value }}">
+            <input type="radio" id="doctor-{{ d.value }}" name="doctor" value="{{ d.value }}" {% if selected_doctor == d.value %}checked{% endif %} required />
+            <span class="pick">
+              <img src="{% static d.image %}" alt="" loading="lazy" />
+              <span><strong>{{ d.name }}</strong><small>{{ d.specialty }}</small></span>
+            </span>
+          </label>
+          {% endfor %}
+        </div>
+        {% if form.doctor.errors %}<ul class="errorlist mt-2">{% for e in form.doctor.errors %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+
+        <!-- 2. Schedule -->
+        <div class="form-section-title mt-4"><i class="fa-solid fa-calendar-days"></i> 2 · Pick date &amp; time</div>
+        <div class="form-grid">
+          <div class="field {% if form.date.errors %}has-error{% endif %}">
+            <label for="{{ form.date.id_for_label }}">Preferred date</label>
+            <div class="input-wrap"><i class="fa-regular fa-calendar"></i>{{ form.date }}</div>
+            {{ form.date.errors }}
+          </div>
+          <div class="field {% if form.time.errors %}has-error{% endif %}">
+            <label for="{{ form.time.id_for_label }}">Preferred time</label>
+            <div class="input-wrap"><i class="fa-regular fa-clock"></i>{{ form.time }}</div>
+            {{ form.time.errors }}
+          </div>
+          <div class="field span-full">
+            <span class="label">Visit type</span>
+            <div class="chips" role="radiogroup" aria-label="Visit type">
+              {% for value, label in visit_types %}
+              <label class="chip" for="visit-{{ value }}">
+                <input type="radio" id="visit-{{ value }}" name="visit_type" value="{{ value }}" {% if selected_visit == value %}checked{% endif %} />
+                <span><i class="fa-solid {% if value == 'video' %}fa-video{% else %}fa-hospital{% endif %}"></i> {{ label }}</span>
+              </label>
+              {% endfor %}
+            </div>
+            {{ form.visit_type.errors }}
+          </div>
+        </div>
+
+        <!-- 3. Details -->
+        <div class="form-section-title mt-4"><i class="fa-solid fa-id-card"></i> 3 · Your details</div>
+        <div class="form-grid">
+          <div class="field span-full {% if form.full_name.errors %}has-error{% endif %}">
+            <label for="{{ form.full_name.id_for_label }}">Full name</label>
+            <div class="input-wrap"><i class="fa-regular fa-user"></i>{{ form.full_name }}</div>
+            {{ form.full_name.errors }}
+          </div>
+          <div class="field {% if form.email.errors %}has-error{% endif %}">
+            <label for="{{ form.email.id_for_label }}">Email</label>
+            <div class="input-wrap"><i class="fa-regular fa-envelope"></i>{{ form.email }}</div>
+            {{ form.email.errors }}
+          </div>
+          <div class="field {% if form.phone.errors %}has-error{% endif %}">
+            <label for="{{ form.phone.id_for_label }}">Phone number</label>
+            <div class="input-wrap"><i class="fa-solid fa-phone"></i>{{ form.phone }}</div>
+            {{ form.phone.errors }}
+          </div>
+          <div class="field span-full">
+            <label for="{{ form.reason.id_for_label }}">Reason for visit <span class="muted" style="font-weight:400">(optional)</span></label>
+            {{ form.reason }}
+            {{ form.reason.errors }}
+          </div>
+        </div>
+
+        <div class="row row--between mt-4">
+          <p class="muted mb-0" style="font-size:.85rem"><i class="fa-solid fa-lock" style="color:var(--cyan)"></i> Your information is kept private and secure.</p>
+          <button type="submit" id="appointment-submit" class="btn btn--lg btn--primary"><i class="fa-solid fa-calendar-check"></i> Confirm booking</button>
+        </div>
+      </form>
+
+      <!-- Aside -->
+      <aside class="stack">
+        <div class="card aside-dark">
+          <h3>How it works</h3>
+          <ol class="steps mt-3">
+            <li><div><strong>Choose your doctor</strong><span>Pick the specialist that fits your needs.</span></div></li>
+            <li><div><strong>Select a time</strong><span>Book in-person or a video consultation.</span></div></li>
+            <li><div><strong>Get confirmation</strong><span>Our team confirms your visit by phone or email.</span></div></li>
+          </ol>
+          <hr />
+          <div class="contact-line"><i class="fa-solid fa-phone"></i> +20 100 000 0000</div>
+          <div class="contact-line"><i class="fa-solid fa-envelope"></i> care@pulseoflife.com</div>
+          <div class="contact-line"><i class="fa-solid fa-clock"></i> Sat – Thu · 9:00 AM – 6:00 PM</div>
+        </div>
+
+        <div class="card card--flat" style="background: var(--mist); border-color: var(--sky);">
+          <div class="row" style="align-items:flex-start; flex-wrap:nowrap">
+            <span class="icon-tile icon-tile--sm" style="background: var(--white); color: var(--danger)"><i class="fa-solid fa-truck-medical"></i></span>
+            <div>
+              <strong style="color: var(--navy)">Medical emergency?</strong>
+              <p class="muted mb-0" style="font-size:.9rem">Don't wait for an appointment — call your local emergency number immediately.</p>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+{% endblock appointment %}
