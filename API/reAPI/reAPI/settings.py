@@ -107,7 +107,8 @@ DATABASES = {
         'PORT': '10855',
         'OPTIONS': {
             'ssl': {
-                'ssl': True 
+                'ssl': True,
+                'ssl': {'ssl_mode': 'REQUIRED'} 
             }
         }
     },
