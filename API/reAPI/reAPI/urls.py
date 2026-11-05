@@ -28,7 +28,6 @@ urlpatterns = [
     path('profil/',include('profil.urls')),
     path('show_reports/',include('show_reports.urls')),
     path('doctors/',include('doctors.urls')),
-    path('', include('patients.urls')), 
 ]
 
 if settings.DEBUG:

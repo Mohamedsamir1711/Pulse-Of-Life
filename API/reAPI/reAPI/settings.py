@@ -21,10 +21,12 @@ pymysql.install_as_MySQLdb()
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-70df*kr3ygy!z%)5l8a0w8o*0=7(*-uujmzs3j_v(6wt4uc10@'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-dev-only')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
 # import dj_database_url
 # import os
 
@@ -36,7 +38,8 @@ DEBUG = True
 
 # SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'unsafe-secret-key')
 
-ALLOWED_HOSTS = ['*'] 
+ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://*.vercel.app'] 
 
 
 
@@ -59,8 +62,9 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -89,7 +93,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'reAPI.wsgi.application'
 
-ALLOWED_HOSTS = ['.vercel.app']
+
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -133,8 +137,6 @@ DATABASES = {
 
 # DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -190,7 +192,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 10,
     
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema',
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -213,7 +215,6 @@ DATABASES_ROUTERS = [
 ]
 
 STORAGES = {
-    "static": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
+  "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
 }

@@ -6,7 +6,6 @@ from rest_framework import routers
 from .views import RecordViewSet
 from .views import result_list, result_detail
 from rest_framework.schemas import get_schema_view
-from rest_framework.documentation import include_docs_urls
 from django.urls import path
 from show_reports.views import OpenApiView
 
