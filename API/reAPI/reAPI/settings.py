@@ -89,7 +89,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'reAPI.wsgi.application'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.vercel.app']
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -98,20 +98,16 @@ pymysql.install_as_MySQLdb()
 
 DATABASES = {
 
-  'default': {
+    'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'defaultdb',
-        'USER': 'avnadmin',
-        'PASSWORD': 'AVNS_2Kj99Pu5-2A5qFSqcJl',
-        'HOST': 'mysql-1ee606dd-pulse-of-life.h.aivencloud.com',
-        'PORT': '10855',
-        'OPTIONS': {
-            'ssl': {
-                'ssl': True,
-                'ssl': {'ssl_mode': 'REQUIRED'} 
-            }
-        }
-    },
+        'NAME': os.environ.get('DB_NAME', 'defaultdb'),
+        'USER': os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PASSWORD'],
+        'HOST': os.environ['DB_HOST'],
+        'PORT': os.environ.get('DB_PORT', '10855'),
+        'OPTIONS': {'ssl': {'ca': str(BASE_DIR / 'ca.pem')},},
+    }
+   
     # 'gradproject': {
     #     'ENGINE': 'django.db.backends.mysql',
     #     'NAME': BASE_DIR / 'gradproject.sql',
