@@ -5,7 +5,6 @@ from django.http import JsonResponse, HttpResponseBadRequest
 from rest_framework.decorators import api_view 
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
 import json
-import joblib
 from rest_framework import viewsets 
 from rest_framework.pagination import PageNumberPagination
 from .management.commands.models import Result
@@ -41,7 +40,7 @@ class ResultPagination(PageNumberPagination):
 
 
 class OpenApiView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         reports = Result.objects.all()  # استعلام قاعدة البيانات
